@@ -1,0 +1,190 @@
+/* =====================
+   DESIGN TOKENS
+===================== */
+:root {
+  --bg: #020617;
+  --bg-soft: #020617cc;
+  --card: #0f172a;
+  --border: #1e293b;
+  --text: #e5e7eb;
+  --muted: #94a3b8;
+  --primary: #0ea5e9;
+  --primary-glow: rgba(14,165,233,0.35);
+  --radius: 16px;
+  --transition: 0.35s cubic-bezier(.4,0,.2,1);
+}
+
+[data-theme='light'] {
+  --bg: #f8fafc;
+  --bg-soft: #ffffffcc;
+  --card: #ffffff;
+  --border: #e2e8f0;
+  --text: #020617;
+  --muted: #475569;
+  --primary: #2563eb;
+  --primary-glow: rgba(37,99,235,0.35);
+}
+
+/* =====================
+   BASE RESET
+===================== */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont;
+  background: radial-gradient(
+    1200px 600px at top,
+    var(--bg-soft),
+    var(--bg)
+  );
+  color: var(--text);
+  line-height: 1.65;
+  transition: background var(--transition), color var(--transition);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* =====================
+   PAGE CONTAINER
+===================== */
+.page {
+  max-width: 1100px;
+  margin: auto;
+  padding: 32px 20px;
+  animation: pageEnter .6s ease;
+}
+
+/* =====================
+   TYPOGRAPHY
+===================== */
+h1 {
+  font-size: clamp(28px, 4vw, 44px);
+  margin-bottom: 12px;
+}
+
+h2 {
+  font-size: clamp(22px, 3vw, 30px);
+  margin: 32px 0 12px;
+}
+
+h3 {
+  margin-top: 28px;
+}
+
+p {
+  color: var(--muted);
+}
+
+/* =====================
+   CARDS
+===================== */
+.card {
+  background: linear-gradient(
+    180deg,
+    var(--card),
+    color-mix(in srgb, var(--card) 80%, black)
+  );
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.25);
+  transition: transform var(--transition),
+              box-shadow var(--transition),
+              border var(--transition);
+}
+
+.card:hover {
+  transform: translateY(-6px) scale(1.015);
+  box-shadow: 0 25px 60px rgba(0,0,0,.45);
+  border-color: var(--primary);
+}
+
+/* =====================
+   GRID
+===================== */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+/* =====================
+   INPUTS & BUTTONS
+===================== */
+input, select {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--card) 85%, black);
+  border: 1px solid var(--border);
+  color: var(--text);
+  transition: border var(--transition), box-shadow var(--transition);
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px var(--primary-glow);
+}
+
+button {
+  margin-top: 12px;
+  padding: 14px;
+  border-radius: 14px;
+  border: none;
+  font-weight: 600;
+  background: linear-gradient(
+    135deg,
+    var(--primary),
+    color-mix(in srgb, var(--primary) 60%, white)
+  );
+  color: #fff;
+  cursor: pointer;
+  transition: transform var(--transition),
+              box-shadow var(--transition);
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 40px var(--primary-glow);
+}
+
+/* =====================
+   ADS
+===================== */
+.ad {
+  margin: 28px 0;
+  padding: 18px;
+  border-radius: 14px;
+  border: 1px dashed var(--border);
+  text-align: center;
+  font-size: 14px;
+  color: var(--muted);
+  animation: pulse 3s infinite ease-in-out;
+}
+
+/* =====================
+   ANIMATIONS
+===================== */
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% { opacity: .6 }
+  50% { opacity: 1 }
+  100% { opacity: .6 }
+}

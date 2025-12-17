@@ -1,0 +1,1 @@
+export default function Privacy(){return(<div style={{padding:20}}><h2>Privacy Policy</h2><p>We use Google AdSense cookies.</p></div>)}
