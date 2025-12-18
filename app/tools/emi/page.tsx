@@ -1,6 +1,7 @@
 
 'use client';
-import {saveHistory,getHistory} from '../../lib/history';
+import { saveHistory, loadHistory } from '../../lib/history';
+
 import {useState} from 'react';
 
 export default function EMI(){
@@ -23,7 +24,7 @@ export default function EMI(){
    <p>{res}</p>
    <div className="ad">Ad Space</div>
    <h4>History</h4>
-   {getHistory('emi').map((h:any,i:number)=>(<div key={i}>{h.emi}</div>))}
+   {loadHistory('emi').map((h:any,i:number)=>(<div key={i}>{h.emi}</div>))}
    <section style={{ marginTop: 40, lineHeight: 1.7 }}>
   <h3>About This EMI Calculator</h3>
 

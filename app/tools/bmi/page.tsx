@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { saveHistory, getHistory } from '../../lib/history';
+import { saveHistory, loadHistory } from '../../lib/history';
+
 
 export default function BMICalculator() {
   const [resultHTML, setResultHTML] = useState('');
@@ -94,7 +95,7 @@ export default function BMICalculator() {
       <div className="ad">Google Ad Space</div>
 
       <h4>Calculation History</h4>
-      {getHistory('bmi').map((h: any, i: number) => (
+      {loadHistory('bmi').map((h: any, i: number) => (
         <div key={i}>
           BMI: {h.bmi} ({h.category})
         </div>

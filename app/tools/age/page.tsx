@@ -1,16 +1,26 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { saveHistory, getHistory } from '../../lib/history';
+import { saveHistory, loadHistory } from '../../lib/history';
 
-
+export const dynamic = 'force-dynamic';
 
 export default function AgeCalculator() {
-  const [resultHTML, setResultHTML] = useState<string>('');
+  const [mounted, setMounted] = useState(false);
+  const [resultHTML, setResultHTML] = useState('');
+  const [history, setHistory] = useState<any[]>([]);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Set default To Date = Today
+  // ✅ prevent hydration mismatch
   useEffect(() => {
+    setMounted(true);
+    setHistory(loadHistory('age'));
+  }, []);
+
+  // ✅ set default To Date = Today (client only)
+  useEffect(() => {
+    if (!mounted) return;
+
     const today = new Date().toISOString().split('T')[0];
     const toInput = document.getElementById('toDate') as HTMLInputElement;
     if (toInput) toInput.value = today;
@@ -18,7 +28,9 @@ export default function AgeCalculator() {
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, []);
+  }, [mounted]);
+
+  if (!mounted) return null; // 🔑 VERY IMPORTANT
 
   const calculateAge = () => {
     const fromInput = document.getElementById('fromDate') as HTMLInputElement;
@@ -31,8 +43,8 @@ export default function AgeCalculator() {
 
     const from = new Date(fromInput.value);
     const toDateValue = toInput.value;
-    const isLive =
-      toDateValue === new Date().toISOString().split('T')[0];
+    const todayStr = new Date().toISOString().split('T')[0];
+    const isLive = toDateValue === todayStr;
 
     if (intervalRef.current) clearInterval(intervalRef.current);
 
@@ -52,11 +64,7 @@ export default function AgeCalculator() {
 
       if (remainingDays < 0) {
         months--;
-        const prevMonth = new Date(
-          now.getFullYear(),
-          now.getMonth(),
-          0
-        );
+        const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
         remainingDays += prevMonth.getDate();
       }
 
@@ -80,19 +88,18 @@ export default function AgeCalculator() {
     };
 
     update();
-
-    if (isLive) {
-      intervalRef.current = setInterval(update, 1000);
-    }
+    if (isLive) intervalRef.current = setInterval(update, 1000);
 
     saveHistory('age', {
       from: fromInput.value,
       to: isLive ? 'Today (Live)' : toDateValue
     });
+
+    setHistory(loadHistory('age')); // ✅ SAFE UPDATE
   };
 
   return (
-    <div style={{ padding: 20, maxWidth: 720, margin: 'auto' }}>
+    <div className="page">
       <h2>Age Calculator (From Date → To Date)</h2>
 
       <label>From Date</label>
@@ -111,68 +118,26 @@ export default function AgeCalculator() {
       <div className="ad">Google Ad Space</div>
 
       <h4>Calculation History</h4>
-      {getHistory('age').map((h: any, i: number) => (
+      {history.length === 0 && <p>No history yet</p>}
+      {history.map((h, i) => (
         <div key={i}>
           {h.from} → {h.to}
         </div>
       ))}
+
+      {/* SEO CONTENT */}
       <section style={{ marginTop: 40, lineHeight: 1.7 }}>
-  <h3>About This Age Calculator</h3>
-
-  <p>
-    The Toolora Age Calculator helps you calculate your exact age between two
-    dates with high precision. Unlike basic calculators that only show age in
-    years, this tool provides a detailed breakdown including years, months,
-    weeks, days, hours, minutes, and even seconds.
-  </p>
-
-  <p>
-    You can calculate age from a selected birth date to any specific date.
-    By default, the calculator uses today’s date, and when today is selected,
-    the age updates live every second. This makes it ideal for tracking real-time
-    age progression accurately.
-  </p>
-
-  <h4>How the Age Calculator Works</h4>
-
-  <p>
-    The calculator works by measuring the exact time difference between the
-    selected start date and end date. It then converts this difference into
-    multiple time units such as total days, weeks, months, and years while
-    accounting for leap years and varying month lengths.
-  </p>
-
-  <ul>
-    <li>✔ Select a start date (such as date of birth)</li>
-    <li>✔ Choose an end date or keep today as default</li>
-    <li>✔ Get precise age details instantly</li>
-    <li>✔ Live updates when comparing with today</li>
-  </ul>
-
-  <h4>Why Use Toolora Age Calculator?</h4>
-
-  <ul>
-    <li>✔ Accurate date-to-date calculation</li>
-    <li>✔ Live age tracking in seconds</li>
-    <li>✔ Age comparison between two people</li>
-    <li>✔ Works worldwide with no registration</li>
-    <li>✔ Free, fast, and privacy-friendly</li>
-  </ul>
-
-  <p>
-    This age calculator is useful for students, professionals, researchers,
-    legal documentation, astrology, healthcare tracking, and personal curiosity.
-    All calculations are performed directly in your browser without sending
-    data to any server.
-  </p>
-
-  <p>
-    Toolora ensures accuracy by using standard date arithmetic and modern
-    JavaScript time APIs, making it reliable across different time zones and
-    devices.
-  </p>
-</section>
-
+        <h3>About This Age Calculator</h3>
+        <p>
+          The Toolora Age Calculator helps you calculate your exact age between
+          two dates with high precision. It provides a detailed breakdown
+          including years, months, weeks, days, hours, minutes, and seconds.
+        </p>
+        <p>
+          When today is selected as the end date, the calculator updates the
+          result live every second, making it ideal for real-time age tracking.
+        </p>
+      </section>
     </div>
   );
 }

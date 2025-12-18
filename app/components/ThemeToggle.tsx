@@ -3,24 +3,29 @@
 import { useEffect, useState } from 'react';
 
 export default function ThemeToggle() {
-  const [theme, setTheme] = useState('dark');
+  const [mounted, setMounted] = useState(false);
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') || 'dark';
-    document.documentElement.setAttribute('data-theme', savedTheme);
-    setTheme(savedTheme);
+    const saved = localStorage.getItem('theme') as 'dark' | 'light' | null;
+    const current = saved || 'dark';
+    document.documentElement.setAttribute('data-theme', current);
+    setTheme(current);
+    setMounted(true);
   }, []);
 
-  const toggleTheme = () => {
-    const newTheme = theme === 'dark' ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
-    setTheme(newTheme);
+  if (!mounted) return null; // 🔑 prevents hydration mismatch
+
+  const toggle = () => {
+    const next = theme === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+    setTheme(next);
   };
 
   return (
-    <button onClick={toggleTheme}>
-      {theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+    <button onClick={toggle}>
+      {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
     </button>
   );
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { saveHistory, getHistory } from '../../lib/history';
+import { saveHistory, loadHistory } from '../../lib/history';
 
 type AgeData = {
   years: number;
@@ -133,7 +133,7 @@ export default function AgeCalculator() {
       <div className="ad">Google Ad Space</div>
 
       <h4>Comparison History</h4>
-      {getHistory('age-compare').map((h: any, i: number) => (
+      {loadHistory('age-compare').map((h: any, i: number) => (
         <div key={i}>
           {h.person1} vs {h.person2} → {h.to}
         </div>
